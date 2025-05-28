@@ -172,6 +172,7 @@ void menuPilaMemoria();
 void mostrarMenuPrincipal() {
     cout << "\n===== MENÚ PRINCIPAL =====\n";
     cout << "1. Gestión de lista de procesos\n";
+    cout << "2. Gestión de cola de prioridad (CPU)\n";
 }
 int main() {
 	
@@ -239,4 +240,56 @@ void menuListaProcesos() {
                 break;
         }
     } while (op != 0);
+}
+void encolarProceso() {
+    int id = leerEnteroNoNegativo("\nIngrese ID del proceso a encolar: ");
+    Nodo* proceso = buscarProcesoPorID(id);
+    if (proceso == NULL) {
+        cout << "Proceso con ID " << id << " no encontrado en la lista de procesos.\n";
+        return;
+    }
+
+    // Crear un nuevo nodo para la cola con los datos del proceso encontrado
+    Nodo* nuevo = new Nodo();
+    nuevo->id = proceso->id;
+    nuevo->nombre = proceso->nombre;
+    nuevo->prioridad = proceso->prioridad;
+    nuevo->siguiente = NULL;
+
+    // Insertar ordenado por prioridad (mayor prioridad primero)
+    if (colaPrioridad == NULL || nuevo->prioridad > colaPrioridad->prioridad) {
+        nuevo->siguiente = colaPrioridad;
+        colaPrioridad = nuevo;
+    } else {
+        Nodo* aux = colaPrioridad;
+        while (aux->siguiente != NULL && aux->siguiente->prioridad >= nuevo->prioridad) {
+            aux = aux->siguiente;
+        }
+        nuevo->siguiente = aux->siguiente;
+        aux->siguiente = nuevo;
+    }
+    cout << "Proceso '" << nuevo->nombre << "' encolado según prioridad.\n";
+}
+void desencolarProceso() {
+    if (colaPrioridad == NULL) {
+        cout << "\nLa cola está vacía.\n";
+    } else {
+        Nodo *aux = colaPrioridad;
+        colaPrioridad = colaPrioridad->siguiente;
+        cout << "\nProceso ejecutado: " << aux->nombre << " (ID: " << aux->id << ")\n";
+        delete aux;
+    }
+}
+
+void mostrarCola() {
+    Nodo *aux = colaPrioridad;
+    if (aux == NULL) {
+        cout << "\nLa cola está vacía.\n";
+    } else {
+        cout << "\nCola de procesos por prioridad:\n";
+        while (aux != NULL) {
+            cout << "ID: " << aux->id << " | Nombre: " << aux->nombre << " | Prioridad: " << aux->prioridad << endl;
+            aux = aux->siguiente;
+        }
+    }
 }
