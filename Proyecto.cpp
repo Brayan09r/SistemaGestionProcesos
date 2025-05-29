@@ -204,6 +204,39 @@ void modificarPrioridad() {
     actualizarColaPrioridad(id, nuevaPrioridad);
 }
 
+// ======== GESTOR DE MEMORIA (Pila) ========
+void pushMemoria() {
+    NodoPila *nuevo = new NodoPila();
+    cout << "\nIngrese nombre del proceso que usará memoria: ";
+    getline(cin, nuevo->proceso);
+    nuevo->siguiente = tope;
+    tope = nuevo;
+    cout << "Memoria asignada al proceso.\n";
+}
+
+void popMemoria() {
+    if (tope == NULL) {
+        cout << "\nNo hay memoria asignada.\n";
+    } else {
+        NodoPila *aux = tope;
+        tope = tope->siguiente;
+        cout << "\nMemoria liberada del proceso: " << aux->proceso << endl;
+        delete aux;
+    }
+}
+
+void mostrarMemoria() {
+    NodoPila *aux = tope;
+    if (aux == NULL) {
+        cout << "\nLa pila de memoria está vacía.\n";
+    } else {
+        cout << "\nEstado de la memoria (pila):\n";
+        while (aux != NULL) {
+            cout << "Proceso: " << aux->proceso << endl;
+            aux = aux->siguiente;
+        }
+    }
+}
 // ======== MENÚ PRINCIPAL Y SUBMENÚS ========
 
 // Prototipos para submenús
