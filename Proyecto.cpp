@@ -281,6 +281,33 @@ int main() {
 
     return 0;
 }
+// ======= SUBMENÚ PILA DE MEMORIA =======
+void menuPilaMemoria() {
+    int op;
+    do {
+        cout << "\n-- Gestión de Memoria (Pila) --\n";
+        cout << "1. Asignar memoria (Push)\n";
+        cout << "2. Liberar memoria (Pop)\n";
+        cout << "3. Mostrar estado de la memoria\n";
+        cout << "0. Volver al menú principal\n";
+        op = pedirOpcion(0, 3);
+        
+        switch (op) {
+            case 1: 
+                pushMemoria(); 
+                break;
+            case 2: 
+                popMemoria(); 
+                break;
+            case 3: 
+                mostrarMemoria(); 
+                break;
+            case 0: 
+                cout << "Volviendo al menú principal...\n"; 
+                break;
+        }
+    } while (op != 0);
+}
 
 // ======= SUBMENÚ LISTA DE PROCESOS =======
 void menuListaProcesos() {
@@ -318,6 +345,7 @@ void menuListaProcesos() {
         }
     } while (op != 0);
 }
+
 // ======= SUBMENÚ COLA DE PRIORIDAD =======
 void menuColaPrioridad() {
     int op;
