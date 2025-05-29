@@ -215,6 +215,8 @@ void mostrarMenuPrincipal() {
     cout << "\n===== MENÚ PRINCIPAL =====\n";
     cout << "1. Gestión de lista de procesos\n";
     cout << "2. Gestión de cola de prioridad (CPU)\n";
+    cout << "3. Gestión de memoria (pila)\n";
+    cout << "0. Guardar y salir\n";
 }
 int main() {
 	
