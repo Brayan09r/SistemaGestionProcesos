@@ -56,6 +56,21 @@ bool existeID(int id) {
     return false; // El ID no existe
 }
 
+// Función para leer opción del menú con validación
+int pedirOpcion(int minimo, int maximo) {
+    int op;
+    do {
+        cout << "Elegir opción (" << minimo << " - " << maximo << "): ";
+        cin >> op;
+        if (cin.fail() || op < minimo || op > maximo) {
+            cout << "Opción incorrecta... \n";
+            cin.clear(); // Limpiar el estado de error
+            cin.ignore(10000, '\n'); // Ignorar la línea de entrada
+        }
+    } while (op < minimo || op > maximo);
+    cin.ignore(10000, '\n'); // Limpiar el buffer
+    return op;
+} 
 
 // ======== GESTOR DE PROCESOS (Lista enlazada) ========
 void insertarProceso() {
@@ -162,6 +177,33 @@ Nodo* buscarProcesoPorID(int id) {
     }
     return NULL; // No encontrado
 }
+
+// ======== FUNCIÓN PARA MODIFICAR PRIORIDAD ========
+
+void modificarPrioridad() {
+    int id = leerEnteroNoNegativo("\nIngrese el ID del proceso a modificar: ");
+    Nodo* proceso = buscarProcesoPorID(id);
+    
+    if (proceso == NULL) {
+        cout << "No se encontró ningún proceso con ID " << id << ".\n";
+        return;
+    }
+    
+    int nuevaPrioridad = leerEnteroNoNegativo("Ingrese la nueva prioridad (mayor número = mayor prioridad, mínimo 0): ");
+    
+    // Mostrar información actual
+    cout << "\nProceso encontrado:\n";
+    cout << "ID: " << proceso->id << " | Nombre: " << proceso->nombre 
+         << " | Prioridad actual: " << proceso->prioridad << endl;
+    
+    // Actualizar la prioridad en la lista principal
+    proceso->prioridad = nuevaPrioridad;
+    cout << "Prioridad actualizada a: " << nuevaPrioridad << endl;
+    
+    // Actualizar la cola de prioridad si el proceso está en ella
+    actualizarColaPrioridad(id, nuevaPrioridad);
+}
+
 // ======== MENÚ PRINCIPAL Y SUBMENÚS ========
 
 // Prototipos para submenús
@@ -241,6 +283,34 @@ void menuListaProcesos() {
         }
     } while (op != 0);
 }
+// ======= SUBMENÚ COLA DE PRIORIDAD =======
+void menuColaPrioridad() {
+    int op;
+    do {
+        cout << "\n-- Gestión de Cola de Prioridad (CPU) --\n";
+        cout << "1. Encolar proceso\n";
+        cout << "2. Ejecutar proceso (desencolar)\n";
+        cout << "3. Mostrar cola\n";
+        cout << "0. Volver al menú principal\n";
+        op = pedirOpcion(0, 3);
+
+        switch (op) {
+            case 1: 
+                encolarProceso(); 
+                break;
+            case 2: 
+                desencolarProceso(); 
+                break;
+            case 3: 
+                mostrarCola(); 
+                break;
+            case 0: 
+                cout << "Volviendo al menú principal...\n"; 
+                break;
+        }
+    } while (op != 0);
+}
+
 void encolarProceso() {
     int id = leerEnteroNoNegativo("\nIngrese ID del proceso a encolar: ");
     Nodo* proceso = buscarProcesoPorID(id);
@@ -292,4 +362,4 @@ void mostrarCola() {
             aux = aux->siguiente;
         }
     }
-}
+} 
