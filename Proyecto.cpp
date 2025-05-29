@@ -308,6 +308,85 @@ void menuPilaMemoria() {
         }
     } while (op != 0);
 }
+// ======== PERSISTENCIA DE DATOS ========
+void guardarProcesos() {
+    ofstream archivo("procesos.txt");
+    if (!archivo) {
+        cout << "No se pudo abrir el archivo para guardar.\n";
+        return;
+    }
+    Nodo *aux = inicio;
+    while (aux != NULL) {
+        archivo << aux->id << "," << aux->nombre << "," << aux->prioridad << "\n";
+        aux = aux->siguiente;
+    }
+    archivo.close();
+    cout << "Procesos guardados correctamente en procesos.txt\n";
+}
+
+void cargarProcesos() {
+    ifstream archivo("procesos.txt");
+    if (!archivo) {
+        cout << "Archivo de procesos no encontrado. Se creará uno nuevo al guardar.\n";
+        return;
+    }
+    string linea;
+    while (getline(archivo, linea)) {
+        // Parseo manual para no usar funciones avanzadas
+        int pos1 = linea.find(',');
+        int pos2 = linea.rfind(',');
+
+        if (pos1 == string::npos || pos2 == string::npos || pos1 == pos2) {
+            continue; // línea no válida, saltar
+        }
+
+        string idStr = linea.substr(0, pos1);
+        string nombre = linea.substr(pos1 + 1, pos2 - pos1 - 1);
+        string prioridadStr = linea.substr(pos2 + 1);
+
+        // Convertir idStr a entero
+        int id = 0;
+        for (size_t i = 0; i < idStr.length(); i++) {
+            char c = idStr[i];
+            if (c >= '0' && c <= '9') {
+                id = id * 10 + (c - '0');
+            }
+        }
+
+        // Verificar si el ID ya existe antes de agregar
+        if (existeID(id)) {
+            cout << "Advertencia: Se omitió el proceso con ID duplicado: " << id << endl;
+            continue;
+        }
+
+        // Convertir prioridadStr a entero
+        int prioridad = 0;
+        for (size_t i = 0; i < prioridadStr.length(); i++) {
+            char c = prioridadStr[i];
+            if (c >= '0' && c <= '9') {
+                prioridad = prioridad * 10 + (c - '0');
+            }
+        }
+        
+        Nodo *nuevo = new Nodo();
+        nuevo->id = id;
+        nuevo->nombre = nombre;
+        nuevo->prioridad = prioridad;
+        nuevo->siguiente = NULL;
+
+        if (inicio == NULL) {
+            inicio = nuevo;
+        } else {
+            Nodo *aux = inicio;
+            while (aux->siguiente != NULL) {
+                aux = aux->siguiente;
+            }
+            aux->siguiente = nuevo;
+        }
+    }
+    archivo.close();
+    cout << "Procesos cargados desde procesos.txt\n";
+}
 
 // ======= SUBMENÚ LISTA DE PROCESOS =======
 void menuListaProcesos() {
