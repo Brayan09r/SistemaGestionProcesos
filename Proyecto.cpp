@@ -4,8 +4,6 @@
 
 using namespace std;
 
-
-
 // ======== ESTRUCTURAS ========
 
 // Nodo para lista enlazada (Gestor de procesos)
@@ -19,6 +17,7 @@ struct Nodo {
 // Nodo para pila (Gestor de memoria)
 struct NodoPila {
     string proceso;
+    int tamanoMemoria; //EN KB
     NodoPila *siguiente;
 };
 
@@ -27,8 +26,9 @@ Nodo *inicio = NULL;             // Lista enlazada de procesos
 Nodo *colaPrioridad = NULL;      // Cola de prioridad (ordenada por prioridad)
 NodoPila *tope = NULL;           // Pila para memoria
 
-// ======== FUNCIONES DE VALIDACIÃ“N ========
+// ======== FUNCIONES DE VALIDACIÓN ========
 // Lee un entero no negativo
+
 int leerEnteroNoNegativo(string mensaje) {
     int valor;
     while (true) {
@@ -36,25 +36,27 @@ int leerEnteroNoNegativo(string mensaje) {
         cin >> valor;
 
         if (cin.fail() || valor < 0) {
-            cout << "Error: ingrese un nÃºmero entero no negativo.\n";
+            cout << "Error: ingrese un número entero no negativo.\n";
             cin.clear(); // Limpiar el estado de error
-            cin.ignore(10000, '\n'); // Ignorar la lÃ­nea de entrada
+            cin.ignore(10000, '\n'); // Ignorar la línea de entrada
         } else {
             cin.ignore(10000, '\n'); // Limpiar el buffer
-            return valor; // Retornar el valor vÃ¡lido
+            return valor; // Retornar el valor válido
         }
     }
 }
-// FunciÃ³n para leer opciÃ³n del menÃº con validaciÃ³n
+
+
+// Función para leer opción del menú con validación
 int pedirOpcion(int minimo, int maximo) {
     int op;
     do {
-        cout << "Elegir opciÃ³n (" << minimo << " - " << maximo << "): ";
+        cout << "Elegir opción (" << minimo << " - " << maximo << "): ";
         cin >> op;
         if (cin.fail() || op < minimo || op > maximo) {
-            cout << "OpciÃ³n incorrecta... \n";
+            cout << "Opción incorrecta... \n";
             cin.clear(); // Limpiar el estado de error
-            cin.ignore(10000, '\n'); // Ignorar la lÃ­nea de entrada
+            cin.ignore(10000, '\n'); // Ignorar la línea de entrada
         }
     } while (op < minimo || op > maximo);
     cin.ignore(10000, '\n'); // Limpiar el buffer
@@ -72,18 +74,17 @@ bool existeID(int id) {
     return false; // El ID no existe
 }
 
-
 // ======== GESTOR DE PROCESOS (Lista enlazada) ========
 void insertarProceso() {
     Nodo *nuevo = new Nodo();
     
-    // Validar ID Ãºnico
+    // Validar ID único
     bool idValido = false;
     while (!idValido) {
-        nuevo->id = leerEnteroNoNegativo("\n Ingrese ID del proceso (nÃºmero entero positivo): ");
+        nuevo->id = leerEnteroNoNegativo("\nIngrese ID del proceso (número entero positivo): ");
         
         if (existeID(nuevo->id)) {
-            cout << "Error: El ID " << nuevo->id << " ya estÃ¡ en uso. Por favor ingrese un ID diferente.\n";
+            cout << "Error: El ID " << nuevo->id << " ya está en uso. Por favor ingrese un ID diferente.\n";
         } else {
             idValido = true;
         }
@@ -91,7 +92,7 @@ void insertarProceso() {
     
     cout << "Ingrese nombre del proceso: ";
     getline(cin, nuevo->nombre);
-    nuevo->prioridad = leerEnteroNoNegativo("Ingrese prioridad del proceso (mayor nÃºmero = mayor prioridad, mÃ­nimo 0): ");
+    nuevo->prioridad = leerEnteroNoNegativo("Ingrese prioridad del proceso (mayor número = mayor prioridad, mínimo 0): ");
     nuevo->siguiente = NULL;
 
     if (inicio == NULL) {
@@ -109,9 +110,9 @@ void insertarProceso() {
 void mostrarProcesos() {
     Nodo *aux = inicio;
     if (aux == NULL) {
-        cout << "\n No hay procesos registrados.\n";
+        cout << "\nNo hay procesos registrados.\n";
     } else {
-        cout << "\n Lista de procesos:\n";
+        cout << "\nLista de procesos:\n";
         while (aux != NULL) {
             cout << "ID: " << aux->id << " | Nombre: " << aux->nombre << " | Prioridad: " << aux->prioridad << endl;
             aux = aux->siguiente;
@@ -120,9 +121,9 @@ void mostrarProcesos() {
 }
 
 void eliminarProceso() {
-    int id = leerEnteroNoNegativo("\n Ingrese el ID del proceso a eliminar: ");
+    int id = leerEnteroNoNegativo("\nIngrese el ID del proceso a eliminar: ");
     if (inicio == NULL) {
-        cout << "La lista estÃ¡ vacÃ­a.\n";
+        cout << "La lista está vacía.\n";
         return;
     }
     Nodo *actual = inicio;
@@ -134,7 +135,7 @@ void eliminarProceso() {
     }
 
     if (actual == NULL) {
-        cout << "No se encontrÃ³ un proceso con ID " << id << ".\n";
+        cout << "No se encontró un proceso con ID " << id << ".\n";
         return;
     }
 
@@ -150,7 +151,7 @@ void eliminarProceso() {
 }
 
 void buscarProcesoPorID() {
-    int id = leerEnteroNoNegativo("\n Ingrese el ID del proceso a buscar: ");
+    int id = leerEnteroNoNegativo("\nIngrese el ID del proceso a buscar: ");
     Nodo* aux = inicio;
 
     while (aux != NULL) {
@@ -164,7 +165,7 @@ void buscarProcesoPorID() {
         aux = aux->siguiente;
     }
 
-    cout << "No se encontrÃ³ ningÃºn proceso con ID " << id << ".\n";
+    cout << "No se encontró ningún proceso con ID " << id << ".\n";
 }
 
 
@@ -178,26 +179,7 @@ Nodo* buscarProcesoPorID(int id) {
     }
     return NULL; // No encontrado
 }
-
 // ======== ACTUALIZAR COLA DE PRIORIDAD ========
-void buscarProcesoPorNombre() {
-    string nombreBuscado;
-    cout << "Ingrese el nombre del proceso a buscar: ";
-    getline(cin, nombreBuscado);
-    Nodo* aux = inicio;
-    bool encontrado = false;
-
-    while (aux != NULL) {
-        if (aux->nombre == nombreBuscado) {
-            cout << "ID: " << aux->id << " | Nombre: " << aux->nombre << " | Prioridad: " << aux->prioridad << endl;
-            encontrado = true;
-        }
-        aux = aux->siguiente;
-    }
-
-    if (!encontrado)
-        cout << "No se encontró ningún proceso con ese nombre.\n";
-}
 void actualizarColaPrioridad(int id, int nuevaPrioridad) {
     if (colaPrioridad == NULL) return;
     
@@ -226,7 +208,7 @@ void actualizarColaPrioridad(int id, int nuevaPrioridad) {
         nodoAMover->prioridad = nuevaPrioridad;
         nodoAMover->siguiente = NULL;
         
-        // Reinsertar en la posiciÃ³n correcta segÃºn la nueva prioridad
+        // Reinsertar en la posición correcta según la nueva prioridad
         if (colaPrioridad == NULL || nuevaPrioridad > colaPrioridad->prioridad) {
             nodoAMover->siguiente = colaPrioridad;
             colaPrioridad = nodoAMover;
@@ -243,20 +225,20 @@ void actualizarColaPrioridad(int id, int nuevaPrioridad) {
     }
 }
 
-// ======== FUNCIÃ“N PARA MODIFICAR PRIORIDAD ========
+// ======== FUNCIÓN PARA MODIFICAR PRIORIDAD ========
 
 void modificarPrioridad() {
     int id = leerEnteroNoNegativo("\nIngrese el ID del proceso a modificar: ");
     Nodo* proceso = buscarProcesoPorID(id);
     
     if (proceso == NULL) {
-        cout << "No se encontrÃ³ ningÃºn proceso con ID " << id << ".\n";
+        cout << "No se encontró ningún proceso con ID " << id << ".\n";
         return;
     }
     
-    int nuevaPrioridad = leerEnteroNoNegativo("Ingrese la nueva prioridad (mayor nÃºmero = mayor prioridad, mÃ­nimo 0): ");
+    int nuevaPrioridad = leerEnteroNoNegativo("Ingrese la nueva prioridad (mayor número = mayor prioridad, mínimo 0): ");
     
-    // Mostrar informaciÃ³n actual
+    // Mostrar información actual
     cout << "\nProceso encontrado:\n";
     cout << "ID: " << proceso->id << " | Nombre: " << proceso->nombre 
          << " | Prioridad actual: " << proceso->prioridad << endl;
@@ -265,12 +247,13 @@ void modificarPrioridad() {
     proceso->prioridad = nuevaPrioridad;
     cout << "Prioridad actualizada a: " << nuevaPrioridad << endl;
     
-    // Actualizar la cola de prioridad si el proceso estÃ¡ en ella
+    // Actualizar la cola de prioridad si el proceso está en ella
     actualizarColaPrioridad(id, nuevaPrioridad);
 }
 
+
 void encolarProceso() {
-    int id = leerEnteroNoNegativo("\n Ingrese ID del proceso a encolar: ");
+    int id = leerEnteroNoNegativo("\nIngrese ID del proceso a encolar: ");
     Nodo* proceso = buscarProcesoPorID(id);
     if (proceso == NULL) {
         cout << "Proceso con ID " << id << " no encontrado en la lista de procesos.\n";
@@ -296,11 +279,11 @@ void encolarProceso() {
         nuevo->siguiente = aux->siguiente;
         aux->siguiente = nuevo;
     }
-    cout << "Proceso '" << nuevo->nombre << "' encolado segÃºn prioridad.\n";
+    cout << "Proceso '" << nuevo->nombre << "' encolado según prioridad.\n";
 }
 void desencolarProceso() {
     if (colaPrioridad == NULL) {
-        cout << "\nLa cola estÃ¡ vacÃ­a.\n";
+        cout << "\nLa cola está vacía.\n";
     } else {
         Nodo *aux = colaPrioridad;
         colaPrioridad = colaPrioridad->siguiente;
@@ -312,7 +295,7 @@ void desencolarProceso() {
 void mostrarCola() {
     Nodo *aux = colaPrioridad;
     if (aux == NULL) {
-        cout << "\n La cola estÃ¡ vacÃ­a.\n";
+        cout << "\nLa cola está vacía.\n";
     } else {
         cout << "\nCola de procesos por prioridad:\n";
         while (aux != NULL) {
@@ -324,12 +307,22 @@ void mostrarCola() {
 
 // ======== GESTOR DE MEMORIA (Pila) ========
 void pushMemoria() {
+    int id = leerEnteroNoNegativo("\nIngrese ID del proceso que usará memoria: ");
+    Nodo* proceso = buscarProcesoPorID(id);
+    if (proceso == NULL) {
+        cout << "No se encontró el proceso con ese ID.\n";
+        return;
+    }
+
     NodoPila *nuevo = new NodoPila();
-    cout << "\nIngrese nombre del proceso que usarÃ¡ memoria: ";
-    getline(cin, nuevo->proceso);
+    nuevo->proceso = proceso->nombre; // Asociado al proceso real
+    
+    nuevo->tamanoMemoria = leerEnteroNoNegativo("Ingrese el tamaño de memoria a asignar (en KB): ");
+    
+    
     nuevo->siguiente = tope;
     tope = nuevo;
-    cout << "Memoria asignada al proceso.\n";
+    cout << "Memoria asignada al proceso '" << proceso->nombre << "' (" << nuevo->tamanoMemoria << " KB).\n";
 }
 
 void popMemoria() {
@@ -338,23 +331,26 @@ void popMemoria() {
     } else {
         NodoPila *aux = tope;
         tope = tope->siguiente;
-        cout << "\nMemoria liberada del proceso: " << aux->proceso << endl;
+        cout << "\nMemoria liberada del proceso: " << aux->proceso 
+             << " (" << aux->tamanoMemoria << " KB)\n";
         delete aux;
     }
 }
 
+
 void mostrarMemoria() {
     NodoPila *aux = tope;
     if (aux == NULL) {
-        cout << "\nLa pila de memoria estÃ¡ vacÃ­a.\n";
+        cout << "\nLa pila de memoria está vacía.\n";
     } else {
         cout << "\nEstado de la memoria (pila):\n";
         while (aux != NULL) {
-            cout << "Proceso: " << aux->proceso << endl;
+            cout << "Proceso: " << aux->proceso << " | Memoria asignada: " << aux->tamanoMemoria << " KB\n";
             aux = aux->siguiente;
         }
     }
 }
+
 
 // ======== PERSISTENCIA DE DATOS ========
 void guardarProcesos() {
@@ -375,7 +371,7 @@ void guardarProcesos() {
 void cargarProcesos() {
     ifstream archivo("procesos.txt");
     if (!archivo) {
-        cout << "Archivo de procesos no encontrado. Se crearÃ¡ uno nuevo al guardar.\n";
+        cout << "Archivo de procesos no encontrado. Se creará uno nuevo al guardar.\n";
         return;
     }
     string linea;
@@ -385,7 +381,7 @@ void cargarProcesos() {
         int pos2 = linea.rfind(',');
 
         if (pos1 == string::npos || pos2 == string::npos || pos1 == pos2) {
-            continue; // lÃ­nea no vÃ¡lida, saltar
+            continue; // línea no válida, saltar
         }
 
         string idStr = linea.substr(0, pos1);
@@ -403,7 +399,7 @@ void cargarProcesos() {
 
         // Verificar si el ID ya existe antes de agregar
         if (existeID(id)) {
-            cout << "Advertencia: Se omitiÃ³ el proceso con ID duplicado: " << id << endl;
+            cout << "Advertencia: Se omitió el proceso con ID duplicado: " << id << endl;
             continue;
         }
 
@@ -436,20 +432,21 @@ void cargarProcesos() {
     cout << "Procesos cargados desde procesos.txt\n";
 }
 
-// ======== MENÃš PRINCIPAL Y SUBMENÃšS ========
+// ======== MENÚ PRINCIPAL Y SUBMENÚS ========
 
-// Prototipos para submenÃºs
+// Prototipos para submenús
 void menuListaProcesos();
 void menuColaPrioridad();
 void menuPilaMemoria();
 
 void mostrarMenuPrincipal() {
-    cout << "\n===== MENÃš PRINCIPAL =====\n";
-    cout << "1. GestiÃ³n de lista de procesos\n";
-    cout << "2. GestiÃ³n de cola de prioridad (CPU)\n";
-    cout << "3. GestiÃ³n de memoria (pila)\n";
+    cout << "\n===== MENÚ PRINCIPAL =====\n";
+    cout << "1. Gestión de lista de procesos\n";
+    cout << "2. Gestión de cola de prioridad (CPU)\n";
+    cout << "3. Gestión de memoria (pila)\n";
     cout << "0. Guardar y salir\n";
 }
+
 
 int main() {
 	
@@ -475,26 +472,25 @@ int main() {
                 cout << "Saliendo del programa...\n";
                 break;
             default:
-                cout << "OpciÃ³n invÃ¡lida.\n";
+                cout << "Opción inválida.\n";
         }
     } while (op != 0);
 
     return 0;
 }
 
-// ======= SUBMENÃš LISTA DE PROCESOS =======
+// ======= SUBMENÚ LISTA DE PROCESOS =======
 void menuListaProcesos() {
     int op;
     do {
-        cout << "\n-- GestiÃ³n de Lista de Procesos --\n";
+        cout << "\n-- Gestión de Lista de Procesos --\n";
         cout << "1. Insertar proceso\n";
         cout << "2. Buscar proceso\n";
         cout << "3. Eliminar proceso\n";
         cout << "4. Modificar prioridad\n";
         cout << "5. Mostrar procesos\n";
-        cout << "6. Buscar proceso por nombre\n";
         
-        cout << "0. Volver al menÃº principal\n";
+        cout << "0. Volver al menú principal\n";
         op = pedirOpcion(0, 5);
 
         switch (op) {
@@ -513,25 +509,22 @@ void menuListaProcesos() {
             case 5: 
                 mostrarProcesos(); 
                 break;
-            case 6:
-            	buscarProcesoPorNombre();
-                break;
             case 0: 
-                cout << "Volviendo al menÃº principal...\n"; 
+                cout << "Volviendo al menú principal...\n"; 
                 break;
         }
     } while (op != 0);
 }
 
-// ======= SUBMENÃš COLA DE PRIORIDAD =======
+// ======= SUBMENÚ COLA DE PRIORIDAD =======
 void menuColaPrioridad() {
     int op;
     do {
-        cout << "\n-- GestiÃ³n de Cola de Prioridad (CPU) --\n";
+        cout << "\n-- Gestión de Cola de Prioridad (CPU) --\n";
         cout << "1. Encolar proceso\n";
         cout << "2. Ejecutar proceso (desencolar)\n";
         cout << "3. Mostrar cola\n";
-        cout << "0. Volver al menÃº principal\n";
+        cout << "0. Volver al menú principal\n";
         op = pedirOpcion(0, 3);
 
         switch (op) {
@@ -545,21 +538,21 @@ void menuColaPrioridad() {
                 mostrarCola(); 
                 break;
             case 0: 
-                cout << "Volviendo al menÃº principal...\n"; 
+                cout << "Volviendo al menú principal...\n"; 
                 break;
         }
     } while (op != 0);
 }
 
-// ======= SUBMENÃš PILA DE MEMORIA =======
+// ======= SUBMENÚ PILA DE MEMORIA =======
 void menuPilaMemoria() {
     int op;
     do {
-        cout << "\n-- GestiÃ³n de Memoria (Pila) --\n";
+        cout << "\n-- Gestión de Memoria (Pila) --\n";
         cout << "1. Asignar memoria (Push)\n";
         cout << "2. Liberar memoria (Pop)\n";
         cout << "3. Mostrar estado de la memoria\n";
-        cout << "0. Volver al menÃº principal\n";
+        cout << "0. Volver al menú principal\n";
         op = pedirOpcion(0, 3);
         
         switch (op) {
@@ -573,8 +566,9 @@ void menuPilaMemoria() {
                 mostrarMemoria(); 
                 break;
             case 0: 
-                cout << "Volviendo al menÃº principal...\n"; 
+                cout << "Volviendo al menú principal...\n"; 
                 break;
         }
     } while (op != 0);
 }
+
