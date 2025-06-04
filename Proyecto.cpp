@@ -178,7 +178,26 @@ Nodo* buscarProcesoPorID(int id) {
     }
     return NULL; // No encontrado
 }
+
 // ======== ACTUALIZAR COLA DE PRIORIDAD ========
+void buscarProcesoPorNombre() {
+    string nombreBuscado;
+    cout << "Ingrese el nombre del proceso a buscar: ";
+    getline(cin, nombreBuscado);
+    Nodo* aux = inicio;
+    bool encontrado = false;
+
+    while (aux != NULL) {
+        if (aux->nombre == nombreBuscado) {
+            cout << "ID: " << aux->id << " | Nombre: " << aux->nombre << " | Prioridad: " << aux->prioridad << endl;
+            encontrado = true;
+        }
+        aux = aux->siguiente;
+    }
+
+    if (!encontrado)
+        cout << "No se encontró ningún proceso con ese nombre.\n";
+}
 void actualizarColaPrioridad(int id, int nuevaPrioridad) {
     if (colaPrioridad == NULL) return;
     
