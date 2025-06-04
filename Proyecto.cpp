@@ -492,6 +492,7 @@ void menuListaProcesos() {
         cout << "3. Eliminar proceso\n";
         cout << "4. Modificar prioridad\n";
         cout << "5. Mostrar procesos\n";
+        cout << "6. Buscar proceso por nombre\n";
         
         cout << "0. Volver al menÃº principal\n";
         op = pedirOpcion(0, 5);
@@ -512,6 +513,9 @@ void menuListaProcesos() {
             case 5: 
                 mostrarProcesos(); 
                 break;
+            case 6:
+            	buscarProcesoPorNombre();
+                break;
             case 0: 
                 cout << "Volviendo al menÃº principal...\n"; 
                 break;
