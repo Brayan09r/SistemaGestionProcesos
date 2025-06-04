@@ -4,6 +4,8 @@
 
 using namespace std;
 
+
+
 // ======== ESTRUCTURAS ========
 
 // Nodo para lista enlazada (Gestor de procesos)
